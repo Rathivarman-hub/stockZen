@@ -58,6 +58,10 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('StockZen API is running...');
+});
+
 app.use('/api/users', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/notifications', notificationRoutes);
