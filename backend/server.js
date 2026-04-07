@@ -20,17 +20,27 @@ const app = express();
 const server = http.createServer(app);
 
 // Setup WebSockets
-const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173', 'http://localhost:5174'].filter(Boolean);
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.VITE_API_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+].filter(Boolean);
 
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
   },
 });
 
 // Middleware
-app.use(cors({ origin: allowedOrigins }));
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
 app.use(express.json());
 
 // Pass io to request object so controllers can use it
@@ -49,7 +59,7 @@ app.use('/api/chatbot', chatbotRoutes);
 // Socket.io connection
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
-  
+
   // Track active users and broadcast
   setActiveUsers(io.engine.clientsCount);
   broadcastStats(io);
