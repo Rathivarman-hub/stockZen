@@ -44,7 +44,10 @@ const LiveStats = () => {
     };
     fetchInitialStats();
 
-    const socket = io(API_URL);
+    const socket = io(API_URL, {
+      transports: ['websocket', 'polling'],
+      withCredentials: true
+    });
     socket.on('stats:update', (newStats) => {
       setStats(newStats);
     });
