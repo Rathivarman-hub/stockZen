@@ -40,8 +40,11 @@ export const InventoryProvider = ({ children }) => {
 
     fetchInventory();
 
-    // Setup Socket.IO connection
-    const newSocket = io(API_URL);
+    // Setup Socket.IO connection with transport priority
+    const newSocket = io(API_URL, {
+      transports: ['websocket', 'polling'],
+      withCredentials: true
+    });
     setSocket(newSocket);
 
     // Socket Event Listeners
