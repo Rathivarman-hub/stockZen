@@ -53,14 +53,12 @@ export const NotificationProvider = ({ children }) => {
         }, 4000);
       };
 
-      // Ensure we don't add multiple listeners
-      socket.off('notification');
       socket.on('notification', handleNewNotification);
+      
+      return () => {
+        socket.off('notification', handleNewNotification);
+      };
     }
-    
-    return () => {
-      if (socket) socket.off('notification');
-    };
   }, [socket]);
 
   const markAsRead = async (id) => {

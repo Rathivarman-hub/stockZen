@@ -21,15 +21,21 @@ const server = http.createServer(app);
 
 // Setup WebSockets
 const allowedOrigins = [
-  process.env.CLIENT_URL,
-  process.env.VITE_API_URL,
+  'https://stockzen-ims.vercel.app',
   'http://localhost:5173',
   'http://localhost:5174',
+  process.env.CLIENT_URL
 ].filter(Boolean);
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   },
@@ -37,10 +43,17 @@ const io = new Server(server, {
 
 // Middleware
 app.use(cors({
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 }));
+app.options('*', cors());
 app.use(express.json());
 
 // Pass io to request object so controllers can use it
