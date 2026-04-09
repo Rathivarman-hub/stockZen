@@ -83,8 +83,22 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5005;
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+
+  // Keep-alive ping to prevent Render free tier from sleeping (every 14 min)
+  if (process.env.NODE_ENV === 'production') {
+    const BACKEND_URL = process.env.RENDER_EXTERNAL_URL || `https://stockzen-ztkm.onrender.com`;
+    setInterval(async () => {
+      try {
+        await fetch(`${BACKEND_URL}/`);
+        console.log('Keep-alive ping sent');
+      } catch (e) {
+        console.log('Keep-alive ping failed:', e.message);
+      }
+    }, 14 * 60 * 1000); // 14 minutes
+  }
+});
 });
