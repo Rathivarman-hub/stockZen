@@ -74,6 +74,21 @@ a {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.info-box-glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+body.light-theme .info-box-glass {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.text-main {
+  color: var(--text-main) !important;
+}
+
 /* Sticky Navbar Glass */
 .navbar-glass {
   background: rgba(3, 7, 18, 0.7); /* Standardized for dark */

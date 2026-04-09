@@ -406,15 +406,15 @@ const DashboardPage = () => {
                     
                     <div className="row g-2 mb-3">
                       <div className="col-6">
-                        <div className="p-2 rounded bg-white bg-opacity-5">
+                        <div className="p-2 info-box-glass">
                           <label className="text-muted small d-block mb-0" style={{ fontSize: '0.65rem' }}>PRICE</label>
                           <span className="fw-bold text-primary">{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(item.price || 0)}</span>
                         </div>
                       </div>
                       <div className="col-6">
-                        <div className="p-2 rounded bg-white bg-opacity-5">
+                        <div className="p-2 info-box-glass">
                           <label className="text-muted small d-block mb-0" style={{ fontSize: '0.65rem' }}>STOCK</label>
-                          <span className="fw-bold fs-5">{item.quantity}</span>
+                          <span className="fw-bold fs-5 text-main">{item.quantity}</span>
                         </div>
                       </div>
                     </div>
