@@ -24,13 +24,9 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Handle auto-close on scroll or click outside
+  // Handle auto-close on click outside
   useEffect(() => {
     const handleClose = (event) => {
-      if (event.type === 'scroll') {
-        setIsOpen(false);
-        return;
-      }
       if (panelRef.current && !panelRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -38,12 +34,10 @@ const Chatbot = () => {
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClose);
-      window.addEventListener('scroll', handleClose, true);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClose);
-      window.removeEventListener('scroll', handleClose, true);
     };
   }, [isOpen]);
 
