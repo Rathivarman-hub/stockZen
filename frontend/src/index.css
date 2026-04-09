@@ -63,6 +63,14 @@ a {
   color: var(--text-muted) !important;
 }
 
+.text-primary {
+  color: var(--accent-color) !important;
+}
+
+.bg-primary {
+  background-color: var(--accent-color) !important;
+}
+
 /* Glassmorphism Panel */
 .glass-panel {
   background: var(--panel-bg);
