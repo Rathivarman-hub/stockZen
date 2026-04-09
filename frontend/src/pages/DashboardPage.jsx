@@ -4,7 +4,7 @@ import { useInventory } from '../context/InventoryContext';
 import { useAuth } from '../context/AuthContext';
 import InventoryChart from '../components/InventoryChart';
 import CountUp from '../components/Common/CountUp';
-import { Plus, Minus, Trash2, AlertCircle, Activity, Clock, Search, Filter, Download, Edit3, DollarSign, Tag, Box, User } from 'lucide-react';
+import { Plus, Minus, Trash2, AlertCircle, Activity, Clock, Search, Filter, Download, Edit3, Tag, Box, User } from 'lucide-react';
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -207,7 +207,7 @@ const DashboardPage = () => {
           </div>
           <div className="col-6 col-lg-3 animate-fade-up delay-200">
             <div className="glass-panel p-3 p-md-4 h-100 bento-card d-flex flex-column justify-content-center align-items-center text-center">
-              <div className="bento-icon mb-2 mb-md-3" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}><DollarSign size={24} /></div>
+              <div className="bento-icon mb-2 mb-md-3" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}><span style={{ fontSize: '1.25rem', fontWeight: '700', lineHeight: 1 }}>₹</span></div>
               <h5 className="text-muted mb-1 fs-6 small text-uppercase fw-bold tracking-wider">Value</h5>
               <p className="fs-2 fw-bold mb-0 text-main tracking-tight">
                 <CountUp end={totalValue} prefix="₹" />

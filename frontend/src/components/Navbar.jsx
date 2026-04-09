@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Package, Activity, LayoutDashboard, LogIn, LogOut, User, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -9,19 +9,46 @@ const Navbar = () => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navRef = useRef(null);
+
+  // Close on scroll or click outside
+  useEffect(() => {
+    const handleClose = (e) => {
+      if (e.type === 'scroll') {
+        setMenuOpen(false);
+        return;
+      }
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClose);
+      window.addEventListener('scroll', handleClose, true);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClose);
+      window.removeEventListener('scroll', handleClose, true);
+    };
+  }, [menuOpen]);
+
+  // Close menu when route changes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
 
   const handleNavigate = (forceTop) => {
-    const navbar = document.getElementById('navbarNav');
-    if (navbar && navbar.classList.contains('show')) {
-      navbar.classList.remove('show');
-    }
+    setMenuOpen(false);
     if (forceTop === true) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   return (
-    <nav className={`navbar navbar-expand-lg ${theme === 'light' ? 'navbar-light' : 'navbar-dark'} navbar-glass py-3`}>
+    <nav ref={navRef} className={`navbar navbar-expand-lg ${theme === 'light' ? 'navbar-light' : 'navbar-dark'} navbar-glass py-3`}>
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center gap-2 fw-bold" to="/" onClick={() => handleNavigate(true)}>
           <div className="bg-primary rounded p-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px' }}>
@@ -43,11 +70,18 @@ const Navbar = () => {
           {user && <NotificationDropdown />}
         </div>
 
-        <button className="navbar-toggler shadow-none border-0 order-lg-4" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        {/* Custom hamburger — only opens, never toggles closed */}
+        <button
+          className="navbar-toggler shadow-none border-0 order-lg-4"
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label="Open menu"
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse order-lg-2" id="navbarNav">
+        {/* Controlled collapse using React state */}
+        <div className={`navbar-collapse order-lg-2 ${menuOpen ? 'show' : 'collapse'}`} id="navbarNav">
           {/* Main Links - centered */}
           <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-2 gap-lg-4 text-center align-items-center">
             <li className="nav-item position-relative w-100">
@@ -61,7 +95,7 @@ const Navbar = () => {
             </li>
           </ul>
 
-          {/* Auth Actions - hidden in hamburger on mobile */}
+          {/* Auth Actions */}
           <div className="d-flex flex-column flex-lg-row align-items-center gap-3 mt-4 mt-lg-0 pb-3 pb-lg-0">
             {user ? (
               <>
@@ -109,3 +143,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
