@@ -63,7 +63,9 @@ export const NotificationProvider = ({ children }) => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put(`${API_URL}/api/notifications/${id}/read`);
+      await axios.put(`${API_URL}/api/notifications/${id}/read`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setNotifications(prev => 
         prev.map(n => n._id === id ? { ...n, read: true } : n)
       );
@@ -74,8 +76,9 @@ export const NotificationProvider = ({ children }) => {
 
   const markAllAsRead = async () => {
     try {
-      const unread = notifications.filter(n => !n.read);
-      await Promise.all(unread.map(n => axios.put(`${API_URL}/api/notifications/${n._id}/read`)));
+      await axios.put(`${API_URL}/api/notifications/read-all`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     } catch (error) {
       console.error('Failed to mark all read', error);
@@ -84,7 +87,9 @@ export const NotificationProvider = ({ children }) => {
 
   const clearAll = async () => {
     try {
-      await axios.delete(`${API_URL}/api/notifications`);
+      await axios.delete(`${API_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setNotifications(prev => prev.filter(n => !n.read));
     } catch (error) {
       console.error('Failed to clear notifications', error);

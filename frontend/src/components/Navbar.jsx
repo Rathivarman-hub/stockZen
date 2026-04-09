@@ -72,9 +72,12 @@ const Navbar = () => {
 
         {/* Custom hamburger — toggles open/closed */}
         <button
-          className="navbar-toggler shadow-none border-0 order-lg-4 d-lg-none"
+          className="navbar-toggler shadow-none border-0 order-lg-4"
           type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(!menuOpen);
+          }}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           style={{ width: '40px', height: '40px', padding: '0' }}
         >
@@ -84,7 +87,7 @@ const Navbar = () => {
         </button>
 
         {/* Controlled collapse using React state */}
-        <div className={`navbar-collapse order-lg-2 ${menuOpen ? 'show' : 'collapse'}`} id="navbarNav">
+        <div className={`navbar-collapse order-lg-2 ${menuOpen ? 'show d-block' : 'collapse d-none d-lg-flex'}`} id="navbarNav">
           {/* Main Links - centered */}
           <ul className="navbar-nav mx-auto mb-2 mb-lg-0 gap-2 gap-lg-4 text-center align-items-center">
             <li className="nav-item position-relative w-100">

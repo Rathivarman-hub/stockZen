@@ -292,7 +292,8 @@ const DashboardPage = () => {
 
         <div className="row g-4">
           <div className="col-lg-9 animate-fade-up delay-300">
-            <div className="glass-panel overflow-hidden">
+            {/* Desktop Table View */}
+            <div className="d-none d-md-block glass-panel overflow-hidden">
               <div className="table-responsive">
                 <table className="table table-glass w-100 align-middle">
                   <thead>
@@ -384,6 +385,63 @@ const DashboardPage = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="d-md-none d-flex flex-column gap-3 animate-fade-up">
+              {loading ? (
+                <div className="glass-panel p-5 text-center"><div className="spinner-border text-primary" /></div>
+              ) : filteredInventory.length === 0 ? (
+                <div className="glass-panel p-5 text-center text-muted">No products matching criteria.</div>
+              ) : (
+                filteredInventory.map((item) => (
+                  <div key={item._id} className="glass-panel p-3">
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                      <div>
+                        <div className="fw-bold fs-5 mb-0" style={{ color: 'var(--text-main)' }}>{item.name}</div>
+                        <div className="text-muted small">ID: {item._id.substring(item._id.length - 6)} • {item.category || 'General'}</div>
+                      </div>
+                      <div>{getStatusBadge(item.status)}</div>
+                    </div>
+                    
+                    <div className="row g-2 mb-3">
+                      <div className="col-6">
+                        <div className="p-2 rounded bg-white bg-opacity-5">
+                          <label className="text-muted small d-block mb-0" style={{ fontSize: '0.65rem' }}>PRICE</label>
+                          <span className="fw-bold text-primary">{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(item.price || 0)}</span>
+                        </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="p-2 rounded bg-white bg-opacity-5">
+                          <label className="text-muted small d-block mb-0" style={{ fontSize: '0.65rem' }}>STOCK</label>
+                          <span className="fw-bold fs-5">{item.quantity}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="d-flex flex-column gap-2 pt-2 border-top" style={{ borderColor: 'var(--panel-border)' }}>
+                       <div className="d-flex justify-content-between align-items-center small text-muted">
+                         <div className="d-flex align-items-center gap-1">
+                            <User size={14} /> <span>{item.createdBy || 'System'}</span>
+                         </div>
+                         <div className="d-flex align-items-center gap-1">
+                            <Clock size={14} /> 
+                            <span>{new Date(item.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                         </div>
+                       </div>
+                       
+                       {user?.role === 'admin' && (
+                         <div className="d-flex gap-2 w-100 mt-1">
+                           <button className="btn btn-sm btn-outline-glass py-2 flex-grow-1" onClick={() => handleStockUpdate(item._id, -1, item.quantity)} disabled={item.quantity === 0} title="Decrease"><Minus size={16} /></button>
+                           <button className="btn btn-sm btn-outline-glass py-2 flex-grow-1" onClick={() => handleStockUpdate(item._id, 1, item.quantity)} title="Increase"><Plus size={16} /></button>
+                           <button className="btn btn-sm btn-outline-glass py-2 flex-grow-1 text-primary" onClick={() => handleOpenModal(item)} title="Edit"><Edit3 size={16} /></button>
+                           <button className="btn btn-sm btn-outline-glass py-2 flex-grow-1 text-danger border-0" onClick={() => handleDelete(item._id)} title="Delete" style={{ background: 'rgba(239, 68, 68, 0.05)' }}><Trash2 size={16} /></button>
+                         </div>
+                       )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
