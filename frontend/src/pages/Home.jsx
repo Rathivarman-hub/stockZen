@@ -81,7 +81,7 @@ const Home = () => {
               <div className="col-lg-6 animate-fade-up delay-200">
                 <div className="glass-panel p-2 rounded-4 ms-lg-4 position-relative">
                    <div className="position-absolute top-0 start-50 translate-middle-x w-75 h-100 bg-primary opacity-10 blur-xl" style={{ filter: 'blur(100px)', zIndex: -1 }}></div>
-                   <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop" alt="Dashboard Preview" className="img-fluid rounded-3 w-100" style={{ objectFit: 'cover', height: '400px', opacity: '0.85' }} />
+                   <img src="/dashboard-preview.png" alt="Dashboard Preview" className="img-fluid rounded-3 w-100" style={{ objectFit: 'cover', height: '400px', opacity: '0.85' }} />
                 </div>
               </div>
             </div>

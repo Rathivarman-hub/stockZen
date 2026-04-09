@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Package, Activity, LayoutDashboard, LogIn, LogOut, User, Sun, Moon } from 'lucide-react';
+import { Package, Activity, LayoutDashboard, LogIn, LogOut, User, Sun, Moon, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import NotificationDropdown from './NotificationDropdown';
@@ -70,14 +70,17 @@ const Navbar = () => {
           {user && <NotificationDropdown />}
         </div>
 
-        {/* Custom hamburger — only opens, never toggles closed */}
+        {/* Custom hamburger — toggles open/closed */}
         <button
-          className="navbar-toggler shadow-none border-0 order-lg-4"
+          className="navbar-toggler shadow-none border-0 order-lg-4 d-lg-none"
           type="button"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Open menu"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          style={{ width: '40px', height: '40px', padding: '0' }}
         >
-          <span className="navbar-toggler-icon"></span>
+          <div className="d-flex align-items-center justify-content-center h-100 w-100">
+            {menuOpen ? <X size={24} style={{ color: 'var(--text-main)' }} /> : <Menu size={24} style={{ color: 'var(--text-main)' }} />}
+          </div>
         </button>
 
         {/* Controlled collapse using React state */}

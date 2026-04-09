@@ -10,6 +10,10 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const chatbotRoutes = require('./routes/chatbotRoutes');
 const { setActiveUsers, broadcastStats } = require('./controllers/statsController');
+const jwt = require('jsonwebtoken');
+
+// Store authenticated users to track unique active users
+const activeUsers = new Map(); // socket.id -> userId
 
 dotenv.config();
 
@@ -45,6 +49,21 @@ const io = new Server(server, {
   cors: corsOptions,
 });
 
+// Socket.io Middleware for Authentication
+io.use((socket, next) => {
+  const token = socket.handshake.auth?.token;
+  
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      socket.user = decoded;
+    } catch (err) {
+      console.log('Socket Auth Error:', err.message);
+    }
+  }
+  next();
+});
+
 // Middleware
 app.set('trust proxy', 1);
 app.use(cors(corsOptions));
@@ -70,15 +89,24 @@ app.use('/api/chatbot', chatbotRoutes);
 
 // Socket.io connection
 io.on('connection', (socket) => {
-  console.log(`User connected: ${socket.id}`);
+  if (socket.user) {
+    socket.join('auth_users'); // Join room for authenticated stats updates
+    activeUsers.set(socket.id, socket.user.id || socket.user._id);
+    console.log(`Authenticated user connected: ${socket.user.name || socket.id}`);
+  } else {
+    console.log(`Anonymous user connected: ${socket.id}`);
+  }
 
-  // Track active users and broadcast
-  setActiveUsers(io.engine.clientsCount);
+  // Update count and broadcast
+  const uniqueUsersCount = new Set(activeUsers.values()).size;
+  setActiveUsers(uniqueUsersCount);
   broadcastStats(io);
 
   socket.on('disconnect', () => {
+    activeUsers.delete(socket.id);
     console.log(`User disconnected: ${socket.id}`);
-    setActiveUsers(io.engine.clientsCount);
+    const uniqueUsersCount = new Set(activeUsers.values()).size;
+    setActiveUsers(uniqueUsersCount);
     broadcastStats(io);
   });
 });
@@ -101,4 +129,3 @@ server.listen(PORT, () => {
     }, 14 * 60 * 1000); // 14 minutes
   }
 });
-;

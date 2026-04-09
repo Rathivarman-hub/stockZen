@@ -59,7 +59,8 @@ const broadcastStats = async (io) => {
   if (!io) return;
   const stats = await calculateStats();
   if (stats) {
-    io.emit('stats:update', stats);
+    // Only broadcast to authenticated users who are in the 'auth_users' room
+    io.to('auth_users').emit('stats:update', stats);
   }
 };
 

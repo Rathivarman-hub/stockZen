@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Users, Package, RefreshCw, ShoppingCart, AlertTriangle } from 'lucide-react';
 import io from 'socket.io-client';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -25,6 +27,7 @@ const CountUp = ({ end, duration = 1000 }) => {
 };
 
 const LiveStats = () => {
+  const { token, loading } = useAuth();
   const [stats, setStats] = useState({
     activeUsers: 0,
     totalProducts: 0,
@@ -34,6 +37,9 @@ const LiveStats = () => {
   });
 
   useEffect(() => {
+    // Only fetch data if we have a token. If not, stats remain at their default (zero)
+    if (!token || loading) return;
+
     const fetchInitialStats = async () => {
       try {
         const { data } = await axios.get(`${API_URL}/api/stats`);
@@ -45,9 +51,11 @@ const LiveStats = () => {
     fetchInitialStats();
 
     const socket = io(API_URL, {
+      auth: { token },
       withCredentials: true,
       reconnectionAttempts: 5
     });
+    
     socket.on('stats:update', (newStats) => {
       setStats(newStats);
     });
@@ -58,7 +66,10 @@ const LiveStats = () => {
         socket.disconnect();
       }
     };
-  }, []);
+  }, [token, loading]);
+
+  // Don't hide the component anymore, just let it render with default zero stats if no token
+  if (loading) return null;
 
   const statCards = [
     { label: 'Active Users', value: stats.activeUsers, icon: <Users size={24} className="text-primary"/>, hue: 'primary' },
