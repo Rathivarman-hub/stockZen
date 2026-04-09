@@ -42,8 +42,8 @@ export const InventoryProvider = ({ children }) => {
 
     // Setup Socket.IO connection with transport priority
     const newSocket = io(API_URL, {
-      transports: ['websocket', 'polling'],
-      withCredentials: true
+      withCredentials: true,
+      reconnectionAttempts: 5
     });
     setSocket(newSocket);
 
@@ -84,7 +84,10 @@ export const InventoryProvider = ({ children }) => {
     });
 
     return () => {
-      newSocket.disconnect();
+      if (newSocket) {
+        newSocket.off();
+        newSocket.disconnect();
+      }
     };
   }, [token]);
 

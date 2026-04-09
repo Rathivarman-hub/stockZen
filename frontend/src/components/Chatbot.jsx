@@ -13,6 +13,8 @@ const Chatbot = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const panelRef = useRef(null);
+  const { token } = useAuth();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -21,7 +23,29 @@ const Chatbot = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
-  const { token } = useAuth();
+
+  // Handle auto-close on scroll or click outside
+  useEffect(() => {
+    const handleClose = (event) => {
+      if (event.type === 'scroll') {
+        setIsOpen(false);
+        return;
+      }
+      if (panelRef.current && !panelRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClose);
+      window.addEventListener('scroll', handleClose, true);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClose);
+      window.removeEventListener('scroll', handleClose, true);
+    };
+  }, [isOpen]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -58,7 +82,7 @@ const Chatbot = () => {
   };
 
   return (
-    <div className="chatbot-wrapper">
+    <div className="chatbot-wrapper" ref={panelRef}>
       {/* Floating Button */}
       <button 
         className={`chatbot-toggle btn-primary-glow ${isOpen ? 'active' : ''}`}

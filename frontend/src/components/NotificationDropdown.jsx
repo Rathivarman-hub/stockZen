@@ -7,16 +7,29 @@ const NotificationDropdown = () => {
   const dropdownRef = useRef(null);
   const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotification();
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside or scrolling
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClose = (event) => {
+      // For clicks, check if it's outside. For scrolls, just close.
+      if (event.type === 'scroll') {
+        setIsOpen(false);
+        return;
+      }
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClose);
+      window.addEventListener('scroll', handleClose, true);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClose);
+      window.removeEventListener('scroll', handleClose, true);
+    };
+  }, [isOpen]);
 
   const getIcon = (type) => {
     switch (type) {

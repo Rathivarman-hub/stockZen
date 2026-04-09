@@ -11,7 +11,7 @@ const Home = () => {
       <Navbar />
       <main>
         {/* Hero Section */}
-        <section className="pt-5 pb-5 mt-4 hero-section-gradient">
+        <section className="pt-5 pb-5 hero-section-gradient">
           <div className="container text-center animate-fade-up">
             <div className="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill glass-panel mb-4 text-primary" style={{ fontSize: '0.85rem', fontWeight: '600' }}>
               <span className="position-relative d-flex h-3 w-3 align-items-center justify-content-center">

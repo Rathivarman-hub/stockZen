@@ -421,14 +421,23 @@ body.light-theme .form-control-glass:focus {
   transition: all 0.2s var(--spring-easing);
 }
 
-.table-glass tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03);
-  transform: scale(1.002);
-  box-shadow: inset 4px 0 0 var(--accent-color);
+@media (hover: hover) {
+  .table-glass tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+    transform: scale(1.002);
+    box-shadow: inset 4px 0 0 var(--accent-color);
+  }
+
+  body.light-theme .table-glass tbody tr:hover {
+    background: rgba(15, 23, 42, 0.02);
+  }
 }
 
-body.light-theme .table-glass tbody tr:hover {
-  background: rgba(15, 23, 42, 0.02);
+@media (max-width: 576px) {
+  .hero-title { font-size: 32px; }
+  .fs-2 { font-size: 1.5rem !important; }
+  .bento-card { padding: 16px; }
+  .glass-panel { --radius: 12px; }
 }
 
 /* Status Transitions */

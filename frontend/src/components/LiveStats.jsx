@@ -45,14 +45,19 @@ const LiveStats = () => {
     fetchInitialStats();
 
     const socket = io(API_URL, {
-      transports: ['websocket', 'polling'],
-      withCredentials: true
+      withCredentials: true,
+      reconnectionAttempts: 5
     });
     socket.on('stats:update', (newStats) => {
       setStats(newStats);
     });
 
-    return () => socket.disconnect();
+    return () => {
+      if (socket) {
+        socket.off();
+        socket.disconnect();
+      }
+    };
   }, []);
 
   const statCards = [
@@ -73,14 +78,15 @@ const LiveStats = () => {
           <h5 className="fw-bold mb-0 text-muted text-uppercase tracking-wider fs-6">Live System Telemetry</h5>
         </div>
         
-        <div className="row g-4 justify-content-center">
+        <div className="row g-3 justify-content-center">
           {statCards.map((stat, idx) => (
-            <div key={idx} className="col-6 col-md-4 col-lg-2 flex-grow-1">
+            <div key={idx} className="col-6 col-md-4 col-lg-2 d-flex">
               <div 
-                className="glass-panel p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center"
+                className="glass-panel p-3 p-md-4 text-center w-100 d-flex flex-column align-items-center justify-content-center"
                 style={{ 
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  cursor: 'default'
+                  cursor: 'default',
+                  minWidth: 0
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
@@ -91,13 +97,13 @@ const LiveStats = () => {
                   e.currentTarget.style.boxShadow = 'var(--bs-box-shadow)';
                 }}
               >
-                <div className={`mb-3 p-2 rounded-circle bg-${stat.hue} bg-opacity-10 d-inline-flex`}>
+                <div className={`mb-2 mb-md-3 p-2 rounded-circle bg-${stat.hue} bg-opacity-10 d-inline-flex`}>
                   {stat.icon}
                 </div>
-                <h2 className="fw-bold display-6 mb-1" style={{ color: 'var(--text-main)' }}>
+                <h2 className="fw-bold display-6 mb-1" style={{ color: 'var(--text-main)', fontSize: 'clamp(1.5rem, 5vw, 2.5rem)' }}>
                   <CountUp end={stat.value || 0} />
                 </h2>
-                <p className="text-muted mb-0 fs-6 fw-medium">{stat.label}</p>
+                <p className="text-muted mb-0 small fw-medium">{stat.label}</p>
               </div>
             </div>
           ))}

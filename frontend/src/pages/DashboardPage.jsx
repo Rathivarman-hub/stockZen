@@ -9,7 +9,7 @@ import { Plus, Minus, Trash2, AlertCircle, Activity, Clock, Search, Filter, Down
 const DashboardPage = () => {
   const { user } = useAuth();
   const { inventory, liveEvents, loading, addProduct, updateStock, deleteProduct, updateProduct } = useInventory();
-  
+
   // State for adding/editing product
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +21,7 @@ const DashboardPage = () => {
     category: 'General',
     description: ''
   });
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
@@ -119,11 +119,11 @@ const DashboardPage = () => {
       item.status,
       (item.quantity * item.price).toFixed(2)
     ]);
-    
-    let csvContent = "data:text/csv;charset=utf-8," 
+
+    let csvContent = "data:text/csv;charset=utf-8,"
       + headers.join(",") + "\n"
       + rows.map(e => e.join(",")).join("\n");
-      
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -151,20 +151,31 @@ const DashboardPage = () => {
             <h1 className="fw-bold mb-1">Stock Intelligence</h1>
             <p className="text-muted mb-0">Real-time inventory optimization system</p>
           </div>
-          <div className="d-flex align-items-center gap-2">
-            {user?.role !== 'admin' && (
-              <span className="badge bg-secondary bg-opacity-10 border border-secondary text-muted px-3 py-2 rounded-pill me-2">
-                <AlertCircle size={14} className="me-1" /> View Only Mode
-              </span>
-            )}
-            <button onClick={exportToCSV} className="btn btn-outline-glass d-flex align-items-center gap-2">
-              <Download size={18} /> Export CSV
-            </button>
-            {user?.role === 'admin' && (
-              <button onClick={() => handleOpenModal()} className="btn btn-primary-glow d-flex align-items-center gap-2">
-                <Plus size={18} /> Add Product
+          <div className="d-flex flex-column flex-sm-row align-items-center gap-3 w-100 w-md-auto">
+            {/* Status Badge - Centered on Mobile */}
+            <div className="d-flex justify-content-center w-100 w-sm-auto">
+              {user?.role === 'admin' ? (
+                <span className="badge bg-primary bg-opacity-10 border border-primary text-primary px-3 py-2 rounded-pill d-inline-flex align-items-center">
+                  <Activity size={14} className="me-1" /> Admin Access
+                </span>
+              ) : (
+                <span className="badge bg-secondary bg-opacity-10 border border-secondary text-muted px-3 py-2 rounded-pill d-inline-flex align-items-center">
+                  <AlertCircle size={14} className="me-1" /> View Only Mode
+                </span>
+              )}
+            </div>
+            
+            {/* Buttons - Same Line on Mobile */}
+            <div className="d-flex align-items-center gap-2 w-100 w-sm-auto">
+              <button onClick={exportToCSV} className="btn btn-outline-glass d-flex align-items-center justify-content-center gap-2 px-3 py-2 flex-grow-1 flex-sm-grow-0">
+                <Download size={18} /> Export CSV
               </button>
-            )}
+              {user?.role === 'admin' && (
+                <button onClick={() => handleOpenModal()} className="btn btn-primary-glow d-flex align-items-center justify-content-center gap-2 px-3 py-2 flex-grow-1 flex-sm-grow-0">
+                  <Plus size={18} /> Add Product
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -184,42 +195,39 @@ const DashboardPage = () => {
         )}
 
         {/* Analytics Summary */}
-        <div className="row g-4 mb-5 animate-fade-up delay-100">
-          <div className="col-md-3 animate-fade-up delay-100">
-            <div className="glass-panel p-4 h-100 bento-card">
-              <div className="bento-icon"><Box size={24} /></div>
-              <h5 className="text-muted mb-1 fs-6">Total Products</h5>
-              <p className="fs-2 fw-bold mb-0" style={{ color: 'var(--text-main)' }}>
+        <div className="row g-3 g-md-4 mb-5 animate-fade-up delay-100">
+          <div className="col-6 col-lg-3 animate-fade-up delay-100">
+            <div className="glass-panel p-3 p-md-4 h-100 bento-card d-flex flex-column justify-content-center align-items-center text-center">
+              <div className="bento-icon mb-2 mb-md-3"><Box size={24} /></div>
+              <h5 className="text-muted mb-1 fs-6 small text-uppercase fw-bold tracking-wider">Products</h5>
+              <p className="fs-2 fw-bold mb-0 text-main tracking-tight">
                 <CountUp end={totalProducts} />
               </p>
             </div>
           </div>
-          <div className="col-md-3 animate-fade-up delay-200">
-            <div className="glass-panel p-4 h-100 bento-card">
-              <div className="bento-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}><DollarSign size={24} /></div>
-              <h5 className="text-muted mb-1 fs-6">Inventory Value</h5>
-              <p className="fs-2 fw-bold mb-0" style={{ color: 'var(--text-main)' }}>
+          <div className="col-6 col-lg-3 animate-fade-up delay-200">
+            <div className="glass-panel p-3 p-md-4 h-100 bento-card d-flex flex-column justify-content-center align-items-center text-center">
+              <div className="bento-icon mb-2 mb-md-3" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981' }}><DollarSign size={24} /></div>
+              <h5 className="text-muted mb-1 fs-6 small text-uppercase fw-bold tracking-wider">Value</h5>
+              <p className="fs-2 fw-bold mb-0 text-main tracking-tight">
                 <CountUp end={totalValue} prefix="₹" />
               </p>
             </div>
           </div>
-          <div className="col-md-3 animate-fade-up delay-300">
-            <div className="glass-panel p-4 h-100 bento-card">
-              <div className="bento-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#F59E0B' }}><AlertCircle size={24} /></div>
-              <h5 className="text-muted mb-1 fs-6">Stock Alerts</h5>
-              <div className="d-flex align-items-baseline gap-2">
-                <p className="fs-2 fw-bold mb-0" style={{ color: 'var(--text-main)' }}>
-                  <CountUp end={outOfStockCount} />
-                </p>
-                <span className="text-muted fs-6">Out of stock</span>
-              </div>
+          <div className="col-6 col-lg-3 animate-fade-up delay-300">
+            <div className="glass-panel p-3 p-md-4 h-100 bento-card d-flex flex-column justify-content-center align-items-center text-center">
+              <div className="bento-icon mb-2 mb-md-3" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#F59E0B' }}><AlertCircle size={24} /></div>
+              <h5 className="text-muted mb-1 fs-6 small text-uppercase fw-bold tracking-wider">Alerts</h5>
+              <p className="fs-2 fw-bold mb-0 text-main tracking-tight">
+                <CountUp end={outOfStockCount} />
+              </p>
             </div>
           </div>
-          <div className="col-md-3 animate-fade-up delay-400">
-            <div className="glass-panel p-4 h-100 bento-card">
-              <div className="bento-icon" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}><Activity size={24} /></div>
-              <h5 className="text-muted mb-1 fs-6">Total Stock Units</h5>
-              <p className="fs-2 fw-bold mb-0" style={{ color: 'var(--text-main)' }}>
+          <div className="col-6 col-lg-3 animate-fade-up delay-400">
+            <div className="glass-panel p-3 p-md-4 h-100 bento-card d-flex flex-column justify-content-center align-items-center text-center">
+              <div className="bento-icon mb-2 mb-md-3" style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' }}><Activity size={24} /></div>
+              <h5 className="text-muted mb-1 fs-6 small text-uppercase fw-bold tracking-wider">Units</h5>
+              <p className="fs-2 fw-bold mb-0 text-main tracking-tight">
                 <CountUp end={totalItems} />
               </p>
             </div>
@@ -229,55 +237,55 @@ const DashboardPage = () => {
         <InventoryChart />
 
         {/* Search & Filters */}
-        <div className="glass-panel p-4 mb-4 animate-fade-up">
+        <div className="glass-panel p-3 p-md-4 mb-4 animate-fade-up">
           <div className="row g-3">
-            <div className="col-lg-4">
+            <div className="col-12 col-md-4">
               <div className="position-relative">
                 <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={18} />
-                <input 
-                  type="text" 
-                  className="form-control form-control-glass ps-5" 
-                  placeholder="Search products by name..." 
+                <input
+                  type="text"
+                  className="form-control form-control-glass ps-5"
+                  placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
             </div>
-            <div className="col-lg-3">
+            <div className="col-6 col-md-3">
               <div className="d-flex align-items-center gap-2">
-                <Filter size={18} className="text-muted" />
-                <select 
-                  className="form-select form-control-glass"
+                <Filter size={18} className="text-muted d-none d-sm-inline" />
+                <select
+                  className="form-select form-control-glass py-2"
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
                 >
-                  <option value="All">All Categories</option>
+                  <option value="All">Categories</option>
                   {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
               </div>
             </div>
-            <div className="col-lg-3">
+            <div className="col-6 col-md-3">
               <div className="d-flex align-items-center gap-2">
-                <Tag size={18} className="text-muted" />
-                <select 
-                  className="form-select form-control-glass"
+                <Tag size={18} className="text-muted d-none d-sm-inline" />
+                <select
+                  className="form-select form-control-glass py-2"
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
                 >
-                  <option value="All">All Statuses</option>
+                  <option value="All">Status</option>
                   <option value="In Stock">In Stock</option>
                   <option value="Low Stock">Low Stock</option>
                   <option value="Out of Stock">Out of Stock</option>
                 </select>
               </div>
             </div>
-            <div className="col-lg-2">
-               <button 
-                  className="btn btn-outline-glass w-100"
-                  onClick={() => { setSearchTerm(''); setFilterCategory('All'); setFilterStatus('All'); }}
-                >
-                  Reset
-                </button>
+            <div className="col-12 col-md-2">
+              <button
+                className="btn btn-outline-glass w-100 py-2"
+                onClick={() => { setSearchTerm(''); setFilterCategory('All'); setFilterStatus('All'); }}
+              >
+                Reset
+              </button>
             </div>
           </div>
         </div>
@@ -290,20 +298,20 @@ const DashboardPage = () => {
                   <thead>
                     <tr>
                       <th>Product Info</th>
-                      <th>Category</th>
-                      <th>Price</th>
+                      <th className="d-none d-md-table-cell">Category</th>
+                      <th className="d-none d-sm-table-cell">Price</th>
                       <th>Stock Status</th>
                       <th>Quantity</th>
-                      <th>Added By</th>
-                      <th>Date & Time</th>
-                      <th className="text-end">Actions</th>
+                      <th className="d-none d-lg-table-cell">Added By</th>
+                      <th className="text-muted small fw-normal d-none d-xl-table-cell">Date & Time</th>
+                      {user?.role === 'admin' && <th className="text-center">Actions</th>}
                     </tr>
                   </thead>
                   <tbody>
                     {loading ? (
-                      <tr><td colSpan="9" className="text-center py-5"><div className="spinner-border text-primary" /></td></tr>
+                      <tr><td colSpan={user?.role === 'admin' ? 8 : 7} className="text-center py-5"><div className="spinner-border text-primary" /></td></tr>
                     ) : filteredInventory.length === 0 ? (
-                      <tr><td colSpan="9" className="text-center py-5 text-muted">No products matching your criteria.</td></tr>
+                      <tr><td colSpan={user?.role === 'admin' ? 8 : 7} className="text-center py-5 text-muted">No products matching your criteria.</td></tr>
                     ) : (
                       filteredInventory.map((item) => (
                         <tr key={item._id}>
@@ -311,66 +319,65 @@ const DashboardPage = () => {
                             <div className="fw-bold" style={{ color: 'var(--text-main)' }}>{item.name}</div>
                             <div className="text-muted small">ID: {item._id.substring(item._id.length - 6)}</div>
                           </td>
-                          <td>
+                          <td className="d-none d-md-table-cell">
                             <span className="badge bg-secondary bg-opacity-10 text-muted border-0 fw-medium px-3 py-2 rounded-2">{item.category || 'General'}</span>
                           </td>
-                          <td className="fw-semibold text-primary">
+                          <td className="fw-semibold text-primary d-none d-sm-table-cell">
                             {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(item.price || 0)}
                           </td>
                           <td>{getStatusBadge(item.status)}</td>
                           <td>
                             <span className="fs-5 fw-bold">{item.quantity}</span>
                           </td>
-                          <td>
+                          <td className="d-none d-lg-table-cell">
                             <div className="d-flex align-items-center gap-2 small">
-                               <User size={14} className="text-muted" />
-                               <span>{item.createdBy || 'System'}</span>
+                              <User size={14} className="text-muted" />
+                              <span>{item.createdBy || 'System'}</span>
                             </div>
                           </td>
-                          <td className="small text-muted">
+                          <td className="small text-muted d-none d-xl-table-cell">
                             <div className="d-flex align-items-center gap-2">
-                               <Clock size={14} />
-                               <span>{new Date(item.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                              <Clock size={14} />
+                              <span>{new Date(item.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
                           </td>
-                          <td className="text-end">
-                            <div className="d-flex align-items-center justify-content-end gap-2">
-                              <button 
-                                className="btn btn-sm btn-outline-glass p-2"
-                                onClick={() => handleStockUpdate(item._id, -1, item.quantity)}
-                                disabled={item.quantity === 0 || user?.role !== 'admin'}
-                                title="Decrease stock"
-                              >
-                                <Minus size={16} />
-                              </button>
-                              <button 
-                                className="btn btn-sm btn-outline-glass p-2"
-                                onClick={() => handleStockUpdate(item._id, 1, item.quantity)}
-                                disabled={user?.role !== 'admin'}
-                                title="Increase stock"
-                              >
-                                <Plus size={16} />
-                              </button>
-                              <div className="vr mx-1" style={{ height: '20px', opacity: 0.1 }}></div>
-                              <button 
-                                className="btn btn-sm btn-outline-glass p-2 text-primary"
-                                onClick={() => handleOpenModal(item)}
-                                disabled={user?.role !== 'admin'}
-                                title="Edit product"
-                              >
-                                <Edit3 size={16} />
-                              </button>
-                              <button 
-                                className="btn btn-sm btn-outline-glass p-2 text-danger border-0"
-                                onClick={() => handleDelete(item._id)}
-                                disabled={user?.role !== 'admin'}
-                                title="Delete product"
-                                style={{ background: 'rgba(239, 68, 68, 0.05)' }}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
+                          {user?.role === 'admin' && (
+                            <td className="text-end">
+                              <div className="d-flex align-items-center justify-content-end gap-2">
+                                <button
+                                  className="btn btn-sm btn-outline-glass p-2"
+                                  onClick={() => handleStockUpdate(item._id, -1, item.quantity)}
+                                  disabled={item.quantity === 0}
+                                  title="Decrease stock"
+                                >
+                                  <Minus size={16} />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-glass p-2"
+                                  onClick={() => handleStockUpdate(item._id, 1, item.quantity)}
+                                  title="Increase stock"
+                                >
+                                  <Plus size={16} />
+                                </button>
+                                <div className="vr mx-1" style={{ height: '20px', opacity: 0.1 }}></div>
+                                <button
+                                  className="btn btn-sm btn-outline-glass p-2 text-primary"
+                                  onClick={() => handleOpenModal(item)}
+                                  title="Edit product"
+                                >
+                                  <Edit3 size={16} />
+                                </button>
+                                <button
+                                  className="btn btn-sm btn-outline-glass p-2 text-danger border-0"
+                                  onClick={() => handleDelete(item._id)}
+                                  title="Delete product"
+                                  style={{ background: 'rgba(239, 68, 68, 0.05)' }}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          )}
                         </tr>
                       ))
                     )}
@@ -379,7 +386,7 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Live Activity Feed */}
           <div className="col-lg-3 animate-fade-up delay-400">
             <div className="glass-panel p-4 h-100 sticky-top" style={{ top: '100px', maxHeight: 'calc(100vh - 120px)' }}>
@@ -387,7 +394,7 @@ const DashboardPage = () => {
                 <Activity size={20} className="text-primary" />
                 <h5 className="fw-bold mb-0">System Activity</h5>
               </div>
-              
+
               <div className="overflow-auto pe-2" style={{ maxHeight: 'calc(100% - 60px)' }}>
                 {liveEvents && liveEvents.length > 0 ? (
                   <div className="d-flex flex-column gap-3">
@@ -428,34 +435,34 @@ const DashboardPage = () => {
             <form onSubmit={handleFormSubmit}>
               <div className="mb-3">
                 <label className="form-label text-muted small mb-1">Product Name</label>
-                <input 
-                  type="text" 
-                  className="form-control form-control-glass" 
+                <input
+                  type="text"
+                  className="form-control form-control-glass"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                 />
               </div>
               <div className="row mb-3">
                 <div className="col-6">
                   <label className="form-label text-muted small mb-1">Quantity</label>
-                  <input 
-                    type="number" 
-                    className="form-control form-control-glass" 
+                  <input
+                    type="number"
+                    className="form-control form-control-glass"
                     value={formData.quantity}
-                    onChange={(e) => setFormData({...formData, quantity: e.target.value === '' ? '' : parseInt(e.target.value)})}
+                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value === '' ? '' : parseInt(e.target.value) })}
                     onFocus={(e) => e.target.select()}
                     required min="0"
                   />
                 </div>
                 <div className="col-6">
                   <label className="form-label text-muted small mb-1">Price (₹)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     step="0.01"
-                    className="form-control form-control-glass" 
+                    className="form-control form-control-glass"
                     value={formData.price}
-                    onChange={(e) => setFormData({...formData, price: e.target.value === '' ? '' : parseFloat(e.target.value)})}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value === '' ? '' : parseFloat(e.target.value) })}
                     onFocus={(e) => e.target.select()}
                     required min="0"
                   />
@@ -463,10 +470,10 @@ const DashboardPage = () => {
               </div>
               <div className="mb-3">
                 <label className="form-label text-muted small mb-1">Category</label>
-                <select 
-                  className="form-select form-control-glass" 
+                <select
+                  className="form-select form-control-glass"
                   value={formData.category}
-                  onChange={(e) => setFormData({...formData, category: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   required
                 >
                   <option value="General">General</option>
@@ -482,12 +489,12 @@ const DashboardPage = () => {
               <div className="mb-3">
                 <label className="form-label text-muted small mb-1">Barcode (Optional)</label>
                 <div className="input-group">
-                  <input 
-                    type="text" 
-                    className="form-control form-control-glass" 
+                  <input
+                    type="text"
+                    className="form-control form-control-glass"
                     placeholder="Scan or enter barcode"
                     value={formData.barcode || ''}
-                    onChange={(e) => setFormData({...formData, barcode: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
                   />
                   <button className="btn btn-outline-glass" type="button" title="Barcode scanner (Coming Soon)" disabled>
                     <Activity size={18} />
@@ -497,11 +504,11 @@ const DashboardPage = () => {
               </div>
               <div className="mb-4">
                 <label className="form-label text-muted small mb-1">Description (Optional)</label>
-                <textarea 
-                  className="form-control form-control-glass" 
+                <textarea
+                  className="form-control form-control-glass"
                   rows="3"
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
               </div>
               {error && <div className="alert alert-danger py-2 mb-3 small bg-transparent text-danger border-danger">{error}</div>}

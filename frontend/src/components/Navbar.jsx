@@ -73,6 +73,11 @@ const Navbar = () => {
                       ADMIN
                     </span>
                   )}
+                  {user.role === 'user' && (
+                    <span className="badge bg-secondary bg-opacity-10 text-muted border border-secondary border-opacity-25 ms-1" style={{ fontSize: '0.65rem' }}>
+                      USER
+                    </span>
+                  )}
                 </div>
 
                 <button onClick={() => { logout(); handleNavigate(); }} className="btn btn-outline-glass d-flex align-items-center gap-2 px-3 py-2 border-0 opacity-75 hover-opacity-100">
