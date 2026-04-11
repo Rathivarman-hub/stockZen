@@ -14,7 +14,7 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [toast, setToast] = useState(null);
-  
+
   const { token } = useAuth();
   const { socket } = useInventory(); // Reuse the socket connection from InventoryContext
 
@@ -46,15 +46,15 @@ export const NotificationProvider = ({ children }) => {
       const handleNewNotification = (notification) => {
         setNotifications(prev => [notification, ...prev]);
         setToast(notification);
-        
+
         // Hide toast after 4 seconds
         setTimeout(() => {
           setToast(null);
-        }, 4000);
+        }, 2000);
       };
 
       socket.on('notification', handleNewNotification);
-      
+
       return () => {
         socket.off('notification', handleNewNotification);
       };
@@ -66,7 +66,7 @@ export const NotificationProvider = ({ children }) => {
       await axios.put(`${API_URL}/api/notifications/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setNotifications(prev => 
+      setNotifications(prev =>
         prev.map(n => n._id === id ? { ...n, read: true } : n)
       );
     } catch (error) {
@@ -99,22 +99,22 @@ export const NotificationProvider = ({ children }) => {
   return (
     <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, clearAll }}>
       {children}
-      
+
       {/* Toast Popup Notification */}
       {toast && (
-        <div 
+        <div
           className="position-fixed animate-fade-up shadow-lg glass-panel d-flex align-items-center gap-3 p-3"
-          style={{ 
-            top: '24px', 
-            right: '24px', 
+          style={{
+            top: '24px',
+            right: '24px',
             zIndex: 9999,
             minWidth: '300px',
-            borderLeft: `4px solid ${toast.type === 'error' ? '#EF4444' : toast.type === 'warning' ? '#FBBF24' : toast.type === 'success' ? '#10B981' : '#0066FF'}` 
+            borderLeft: `4px solid ${toast.type === 'error' ? '#EF4444' : toast.type === 'warning' ? '#FBBF24' : toast.type === 'success' ? '#10B981' : '#0066FF'}`
           }}
         >
           <div>
-             <h6 className="fw-bold mb-1 text-white">{toast.type === 'error' ? 'Alert' : toast.type === 'warning' ? 'Warning' : 'Notification'}</h6>
-             <p className="mb-0 fs-6 text-muted">{toast.message}</p>
+            <h6 className="fw-bold mb-1 text-white">{toast.type === 'error' ? 'Alert' : toast.type === 'warning' ? 'Warning' : 'Notification'}</h6>
+            <p className="mb-0 fs-6 text-muted">{toast.message}</p>
           </div>
         </div>
       )}
