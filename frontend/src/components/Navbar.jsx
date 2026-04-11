@@ -12,13 +12,9 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef(null);
 
-  // Close on scroll or click outside
+  // Close on click outside
   useEffect(() => {
     const handleClose = (e) => {
-      if (e.type === 'scroll') {
-        setMenuOpen(false);
-        return;
-      }
       if (navRef.current && !navRef.current.contains(e.target)) {
         setMenuOpen(false);
       }
@@ -26,12 +22,10 @@ const Navbar = () => {
 
     if (menuOpen) {
       document.addEventListener('mousedown', handleClose);
-      window.addEventListener('scroll', handleClose, true);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClose);
-      window.removeEventListener('scroll', handleClose, true);
     };
   }, [menuOpen]);
 
