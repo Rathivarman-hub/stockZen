@@ -223,8 +223,8 @@ const Chatbot = () => {
           display: flex;
           flex-direction: column;
           overflow: hidden;
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: var(--card-shadow);
+          border: 1px solid var(--panel-border);
         }
 
         .chatbot-header {
@@ -267,10 +267,14 @@ const Chatbot = () => {
         }
 
         .bot .message-bubble {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(120, 120, 128, 0.1);
+          border: 1px solid var(--panel-border);
           color: var(--text-main);
           border-bottom-left-radius: 4px;
+        }
+
+        body.light-theme .bot .message-bubble {
+          background: rgba(0, 0, 0, 0.05);
         }
 
         .user .message-bubble {
@@ -295,11 +299,15 @@ const Chatbot = () => {
           gap: 12px;
           background: rgba(0, 0, 0, 0.2);
         }
+        
+        body.light-theme .chatbot-input {
+          background: rgba(0, 0, 0, 0.03);
+        }
 
         .chatbot-input input {
           flex: 1;
           background: rgba(255, 255, 255, 0.07);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid var(--panel-border);
           border-radius: 12px;
           padding: 12px 18px;
           color: var(--text-main);
@@ -307,11 +315,19 @@ const Chatbot = () => {
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        body.light-theme .chatbot-input input {
+          background: #fff;
+        }
+
         .chatbot-input input:focus {
           outline: none;
           border-color: var(--accent-color);
           background: rgba(255, 255, 255, 0.1);
           box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.1);
+        }
+        
+        body.light-theme .chatbot-input input:focus {
+          background: #fff;
         }
 
         .chatbot-input button {

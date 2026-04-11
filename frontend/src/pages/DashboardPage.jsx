@@ -4,7 +4,7 @@ import { useInventory } from '../context/InventoryContext';
 import { useAuth } from '../context/AuthContext';
 import InventoryChart from '../components/InventoryChart';
 import CountUp from '../components/Common/CountUp';
-import { Plus, Minus, Trash2, AlertCircle, Activity, Clock, Search, Filter, Download, Edit3, Tag, Box, User } from 'lucide-react';
+import { Plus, Minus, Trash2, AlertCircle, Activity, Clock, Search, Filter, Download, Edit3, Tag, Box, User, X } from 'lucide-react';
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -26,7 +26,15 @@ const DashboardPage = () => {
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [error, setError] = useState(null);
+  const [dismissedAlert, setDismissedAlert] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+
+  // Computed analytics
+  const criticalStockItems = inventory.filter((item) => item.quantity > 0 && item.quantity < 5);
+  const totalProducts = inventory.length;
+  const totalItems = inventory.reduce((acc, item) => acc + item.quantity, 0);
+  const totalValue = inventory.reduce((acc, item) => acc + (item.quantity * item.price), 0);
+  const outOfStockCount = inventory.filter((item) => item.quantity === 0).length;
 
   // Categories list for filter and dropdown
   const categories = useMemo(() => {
@@ -34,12 +42,12 @@ const DashboardPage = () => {
     return Array.from(new Set(cats));
   }, [inventory]);
 
-  // Computed analytics
-  const totalProducts = inventory.length;
-  const totalItems = inventory.reduce((acc, item) => acc + item.quantity, 0);
-  const totalValue = inventory.reduce((acc, item) => acc + (item.quantity * item.price), 0);
-  const outOfStockCount = inventory.filter((item) => item.quantity === 0).length;
-  const criticalStockItems = inventory.filter((item) => item.quantity > 0 && item.quantity < 5);
+  // Reset dismissed alert when inventory changes significantly (optional)
+  useEffect(() => {
+    if (criticalStockItems.length === 0) {
+      setDismissedAlert(false);
+    }
+  }, [criticalStockItems.length]);
 
   // Filtered inventory
   const filteredInventory = useMemo(() => {
@@ -155,12 +163,22 @@ const DashboardPage = () => {
             {/* Status Badge - Centered on Mobile */}
             <div className="d-flex justify-content-center w-100 w-sm-auto">
               {user?.role === 'admin' ? (
-                <span className="badge bg-primary bg-opacity-10 border border-primary text-primary px-3 py-2 rounded-pill d-inline-flex align-items-center">
-                  <Activity size={14} className="me-1" /> Admin Access
+                <span className="badge px-3 py-2 rounded-pill d-inline-flex align-items-center" style={{ 
+                  background: 'rgba(var(--accent-color-rgb), 0.15)', 
+                  color: 'var(--accent-color)',
+                  border: '1px solid var(--accent-color)',
+                  fontWeight: '600'
+                }}>
+                  <Activity size={14} className="me-2" /> Admin Access
                 </span>
               ) : (
-                <span className="badge bg-secondary bg-opacity-10 border border-secondary text-muted px-3 py-2 rounded-pill d-inline-flex align-items-center">
-                  <AlertCircle size={14} className="me-1" /> View Only Mode
+                <span className="badge px-3 py-2 rounded-pill d-inline-flex align-items-center" style={{ 
+                  background: 'rgba(120, 120, 128, 0.1)', 
+                  color: 'var(--text-muted)',
+                  border: '1px solid var(--panel-border)',
+                  fontWeight: '600'
+                }}>
+                  <AlertCircle size={14} className="me-2" /> View Only Mode
                 </span>
               )}
             </div>
@@ -179,10 +197,10 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {criticalStockItems.length > 0 && (
-          <div className="alert bg-danger bg-opacity-10 border border-danger text-danger d-flex align-items-start gap-3 mb-5 animate-fade-up shadow-sm">
+        {user?.role === 'admin' && criticalStockItems.length > 0 && !dismissedAlert && (
+          <div className="alert bg-danger bg-opacity-10 border border-danger text-danger d-flex align-items-start gap-3 mb-5 animate-fade-up shadow-sm position-relative">
             <div className="mt-1"><AlertCircle size={24} /></div>
-            <div>
+            <div className="flex-grow-1">
               <h5 className="fw-bold mb-1">Critical Stock Alert</h5>
               <p className="mb-0 fs-6">The following items are running out (less than 5 units remaining):</p>
               <div className="d-flex flex-wrap gap-2 mt-2">
@@ -191,6 +209,14 @@ const DashboardPage = () => {
                 ))}
               </div>
             </div>
+            <button 
+              onClick={() => setDismissedAlert(true)}
+              className="btn btn-link text-danger p-0 border-0 opacity-50 hover-opacity-100 transition-all"
+              style={{ position: 'absolute', top: '15px', right: '15px' }}
+              title="Dismiss alert"
+            >
+              <X size={20} />
+            </button>
           </div>
         )}
 

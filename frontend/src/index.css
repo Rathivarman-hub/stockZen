@@ -7,10 +7,11 @@ html {
 :root {
   /* Premium Dark Mode - Deep Space Aesthetic */
   --bg-color: #030712; 
-  --panel-bg: rgba(17, 24, 39, 0.6);
-  --panel-border: rgba(255, 255, 255, 0.06);
+  --panel-bg: rgba(6, 6, 12, 0.9); /* Darker and more opaque for better contrast */
+  --panel-border: rgba(255, 255, 255, 0.12); /* Slightly more visible border */
   --accent-color: #3b82f6; /* Electric Blue */
-  --accent-glow: rgba(59, 130, 246, 0.4);
+  --accent-color-rgb: 59, 130, 246;
+  --accent-glow: rgba(59, 130, 246, 0.1); /* Subtle glow for backgrounds */
   --text-main: #f9fafb;
   --text-muted: #94a3b8;
   --radius: 20px;
@@ -18,19 +19,20 @@ html {
   --status-instock: #10b981;
   --status-low: #f59e0b;
   --status-out: #ef4444;
-  --card-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7);
 }
 
 body.light-theme {
   /* Premium Light Mode - Pure & Minimal Aesthetic */
   --bg-color: #f8fafc;
-  --panel-bg: rgba(255, 255, 255, 0.8);
-  --panel-border: rgba(15, 23, 42, 0.08);
+  --panel-bg: rgba(255, 255, 255, 0.98); /* Brighter and nearly opaque for pure look */
+  --panel-border: rgba(15, 23, 42, 0.15);
   --accent-color: #2563eb; 
-  --accent-glow: rgba(37, 99, 235, 0.15);
+  --accent-color-rgb: 37, 99, 235;
+  --accent-glow: rgba(37, 99, 235, 0.05);
   --text-main: #0f172a;
   --text-muted: #64748b;
-  --card-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
+  --card-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.2);
 }
 
 body {
@@ -99,7 +101,7 @@ body.light-theme .info-box-glass {
 
 /* Sticky Navbar Glass */
 .navbar-glass {
-  background: rgba(3, 7, 18, 0.7); /* Standardized for dark */
+  background: var(--panel-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--panel-border);
@@ -107,10 +109,12 @@ body.light-theme .info-box-glass {
   top: 0;
   z-index: 1050;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 body.light-theme .navbar-glass {
-  background: rgba(248, 250, 252, 0.7); /* Standardized for light */
+  background: var(--panel-bg);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
 }
 
 .dropdown-aligned {

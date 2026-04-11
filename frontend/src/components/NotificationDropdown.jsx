@@ -7,14 +7,9 @@ const NotificationDropdown = () => {
   const dropdownRef = useRef(null);
   const { notifications, unreadCount, markAsRead, markAllAsRead, clearAll } = useNotification();
 
-  // Close dropdown when clicking outside or scrolling
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClose = (event) => {
-      // For clicks, check if it's outside. For scrolls, just close.
-      if (event.type === 'scroll') {
-        setIsOpen(false);
-        return;
-      }
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -22,12 +17,10 @@ const NotificationDropdown = () => {
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClose);
-      window.addEventListener('scroll', handleClose, true);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClose);
-      window.removeEventListener('scroll', handleClose, true);
     };
   }, [isOpen]);
 
@@ -93,16 +86,24 @@ const NotificationDropdown = () => {
               notifications.map((notif) => (
                 <div 
                   key={notif._id} 
-                  className={`p-3 border-bottom d-flex align-items-start gap-3 position-relative ${notif.read ? 'opacity-75' : 'bg-primary bg-opacity-10'}`}
-                  style={{ borderColor: 'var(--panel-border)', cursor: 'pointer', transition: 'background-color 0.2s' }}
-                  onMouseEnter={(e) => { if (!notif.read) e.currentTarget.classList.add('bg-opacity-25'); }}
-                  onMouseLeave={(e) => { if (!notif.read) e.currentTarget.classList.remove('bg-opacity-25'); }}
+                  className={`p-3 border-bottom d-flex align-items-start gap-3 position-relative ${notif.read ? 'opacity-60' : ''}`}
+                  style={{ 
+                    borderColor: 'var(--panel-border)', 
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                    borderLeft: notif.read ? '3px solid transparent' : '3px solid var(--accent-color)'
+                  }}
+                  onMouseEnter={(e) => { 
+                    e.currentTarget.style.backgroundColor = 'rgba(120, 120, 128, 0.05)';
+                  }}
+                  onMouseLeave={(e) => { 
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
                   onClick={() => { if (!notif.read) markAsRead(notif._id); }}
                 >
-                  {!notif.read && <div className="position-absolute bg-primary rounded-circle" style={{ width: '6px', height: '6px', left: '8px', top: '24px' }}></div>}
                   <div className="mt-1">{getIcon(notif.type)}</div>
                   <div className="flex-grow-1">
-                    <p className={`mb-1 fs-6 lh-sm fw-medium ${notif.read ? 'text-muted' : ''}`} style={notif.read ? {} : { color: 'var(--text-main)' }}>{notif.message}</p>
+                    <p className={`mb-1 fs-6 lh-sm ${notif.read ? '' : 'fw-semibold text-main'}`} style={{ color: notif.read ? 'var(--text-muted)' : 'var(--text-main)' }}>{notif.message}</p>
                     <span className="text-muted" style={{ fontSize: '0.75rem' }}>{formatTime(notif.createdAt)}</span>
                   </div>
                 </div>
