@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Package, Activity, LayoutDashboard, LogIn, LogOut, User, Sun, Moon, Menu, X } from 'lucide-react';
+import { Package, Activity, LayoutDashboard, LogIn, LogOut, User, Sun, Moon, Menu, X, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import NotificationDropdown from './NotificationDropdown';
@@ -93,6 +93,18 @@ const Navbar = () => {
             <li className="nav-item position-relative w-100">
               <Link className={`nav-link pb-1 ${location.pathname === '/dashboard' ? 'nav-tab-active' : ''}`} to="/dashboard" onClick={() => handleNavigate(true)}>Dashboard</Link>
             </li>
+            {user?.role === 'admin' && (
+              <li className="nav-item position-relative w-100">
+                <Link
+                  className={`nav-link pb-1 d-flex align-items-center justify-content-center gap-1 ${location.pathname === '/audit' ? 'nav-tab-active' : ''}`}
+                  to="/audit"
+                  onClick={() => handleNavigate(true)}
+                >
+                  <ClipboardList size={14} />
+                  Audit Log
+                </Link>
+              </li>
+            )}
           </ul>
 
           {/* Auth Actions */}

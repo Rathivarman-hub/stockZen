@@ -11,6 +11,7 @@ import RegisterPage from './pages/RegisterPage';
 import ScrollToTop from './components/ScrollToTop';
 import BackToTopButton from './components/BackToTopButton';
 import Chatbot from './components/Chatbot';
+import AuditLogPage from './pages/AuditLogPage';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -46,6 +47,14 @@ function App() {
                   <DashboardPage />
                 </ProtectedRoute>
               } 
+            />
+            <Route
+              path="/audit"
+              element={
+                <ProtectedRoute>
+                  <AuditLogPage />
+                </ProtectedRoute>
+              }
             />
             <Route path="*" element={<Home />} />
           </Routes>

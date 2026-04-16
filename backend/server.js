@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const chatbotRoutes = require('./routes/chatbotRoutes');
+const auditRoutes = require('./routes/auditRoutes');
 const { setActiveUsers, broadcastStats } = require('./controllers/statsController');
 const jwt = require('jsonwebtoken');
 
@@ -86,6 +87,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/audit', auditRoutes);
 
 // Socket.io connection
 io.on('connection', (socket) => {

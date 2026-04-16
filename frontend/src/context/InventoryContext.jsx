@@ -13,6 +13,7 @@ export function useInventory() {
 export const InventoryProvider = ({ children }) => {
   const [inventory, setInventory] = useState([]);
   const [liveEvents, setLiveEvents] = useState([]);
+  const [outgoingEvents, setOutgoingEvents] = useState([]);
   const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
@@ -83,6 +84,10 @@ export const InventoryProvider = ({ children }) => {
       setLiveEvents((prev) => [feedItem, ...prev].slice(0, 50)); 
     });
 
+    newSocket.on('stock_out_event', (event) => {
+      setOutgoingEvents((prev) => [event, ...prev].slice(0, 20));
+    });
+
     return () => {
       if (newSocket) {
         newSocket.off();
@@ -118,16 +123,25 @@ export const InventoryProvider = ({ children }) => {
     });
   };
 
+  const bulkImport = async (products) => {
+    const { data } = await axios.post(`${API_URL}/api/products/bulk`, { products }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return data;
+  };
+
   return (
     <InventoryContext.Provider
       value={{
         inventory,
         liveEvents,
+        outgoingEvents,
         loading,
         addProduct,
         updateStock,
         updateProduct,
         deleteProduct,
+        bulkImport,
         socket
       }}
     >
