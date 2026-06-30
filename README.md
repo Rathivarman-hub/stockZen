@@ -1,4 +1,4 @@
-# Live Inventory Management System (IMS)
+# StockZen Inventory Management System (IMS)
 
 This is a comprehensive, real-time Live Inventory Management System built with the MERN stack (MongoDB, Express, React, Node.js) and enhanced with real-time capabilities via Socket.io and AI features via Google Generative AI.
 
